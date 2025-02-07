@@ -27,7 +27,7 @@ interact(".rotate-handle").draggable({
         box.setAttribute('data-center-x', rect.left + rect.width / 2);
         box.setAttribute('data-center-y', rect.top + rect.height / 2);
         // get the angle of the element when the drag starts
-        box.setAttribute('data-angle', 0.785398);
+        box.setAttribute('data-angle', getDragAngle(event));
     },
     onmove: function(event) {
         let box = event.target.parentElement;
@@ -36,14 +36,13 @@ interact(".rotate-handle").draggable({
         const posY = parseInt(css(event.target, "top"), 10);
 
         let angle = getDragAngle(event);
-        angle = 0,785398;
-        box.style.transform = `rotate(${0.785398}rad)`
+        box.style.transform = `rotate(${angle}rad)`
     },
     onend: function(event) {
         let box = event.target.parentElement;
 
         // save the angle on dragend
-        box.setAttribute('data-angle', 0.785398);
+        box.setAttribute('data-angle', getDragAngle(event));
     },
 })
 
@@ -123,44 +122,25 @@ interactElement
         div.style.position = "absolute";
         document.body.appendChild(div);
 
-        let newWidth;
-        let newHeight;
-        const newPos = {
-          x : 0,
-          y : 0
+        const positions = {
+          "top-left": { x: newC.x, y: newC.y, width: newA.x - newC.x, height: newA.y - newC.y },
+          "top-right": { x: newA.x, y: newC.y, width: newC.x - newA.x, height: newA.y - newC.y },
+          "bottom-right": { x: newA.x, y: newA.y, width: newC.x - newA.x, height: newC.y - newA.y },
+          "bottom-left": { x: newC.x, y: newA.y, width: newA.x - newC.x, height: newC.y - newA.y }
         };
-
-        if (edges.top && edges.left) {
-          newPos.x = newC.x;
-          newPos.y = newC.y;
-
-          newWidth = newA.x - newC.x;
-          newHeight = newA.y - newC.y;
-        } else if (edges.top && edges.right) {
-          newPos.x = newA.x;
-          newPos.y = newC.y;
-
-          newWidth = newC.x - newA.x;
-          newHeight = newA.y - newC.y;
-        } else if (edges.bottom && edges.right) {
-          newPos.x = newA.x;
-          newPos.y = newA.y;
-
-          newWidth = newC.x - newA.x;
-          newHeight = newC.y - newA.y;
-        } else if (edges.bottom && edges.left) {
-          newPos.x = newC.x;
-          newPos.y = newA.y;
-
-          newWidth = newA.x - newC.x;
-          newHeight = newC.y - newA.y
-        }
         
-        target.style.left = newPos.x+ "px";
-        target.style.top = newPos.y + "px";
-
-        target.style.width = `${newWidth}px`;
-        target.style.height = `${newHeight}px`;
+        const key = `${edges.top ? "top" : "bottom"}-${edges.left ? "left" : "right"}`;
+        
+        if (positions[key]) {
+          const { x, y, width, height } = positions[key];
+        
+          Object.assign(target.style, {
+            left: `${x}px`,
+            top: `${y}px`,
+            width: `${width}px`,
+            height: `${height}px`
+          });
+        }
       }
     }
   })
