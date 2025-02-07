@@ -119,6 +119,10 @@ interactElement
         div.style.position = "absolute";
         document.body.appendChild(div);
 
+        setTimeout(() => {
+          div.remove();
+        }, 5000)
+
         const positions = {
           "top-left": { x: newC.x, y: newC.y, width: newA.x - newC.x, height: newA.y - newC.y },
           "top-right": { x: newA.x, y: newC.y, width: newC.x - newA.x, height: newA.y - newC.y },
