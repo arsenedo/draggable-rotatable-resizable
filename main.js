@@ -32,9 +32,6 @@ interact(".rotate-handle").draggable({
     onmove: function(event) {
         let box = event.target.parentElement;
 
-        const posX = parseInt(css(event.target, "left"), 10);
-        const posY = parseInt(css(event.target, "top"), 10);
-
         let angle = getDragAngle(event);
         box.style.transform = `rotate(${angle}rad)`
     },
