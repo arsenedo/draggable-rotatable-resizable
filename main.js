@@ -36,10 +36,32 @@ interact(".rotate-handle").draggable({
         box.style.transform = `rotate(${angle}rad)`
     },
     onend: function(event) {
-        let box = event.target.parentElement;
+        const {target} = event;
+        let box = target.parentElement;
+
+        const dragAngle = getDragAngle(event);
 
         // save the angle on dragend
-        box.setAttribute('data-angle', getDragAngle(event));
+        box.setAttribute('data-angle', dragAngle);
+
+        const startWidth = parseFloat(css(box, "width"), 10);
+        const startHeight = parseFloat(css(box, "height"), 10);
+        const posX = parseFloat(css(box, "left"), 10);
+        const posY = parseFloat(css(box, "top"), 10);
+
+        const center = {
+          x : posX + startWidth / 2,
+          y : posY + startHeight / 2,
+      }
+
+        const resizeHandles = document.querySelectorAll(".resize-handle");
+        
+        resizeHandles.forEach(handle => {
+          const handleRect = handle.getBoundingClientRect();
+
+          const handleAngle = angle(center, {x : handleRect.x, y: handleRect.y});
+          handle.style.cursor = rotateCursor(handle, handleAngle);
+        });
     },
 })
 
@@ -56,8 +78,8 @@ interactElement
         const { target } = event;
         const { edges } = event;
       
-        const width = parseFloat(css(target, "width"), 10);
-        const height = parseFloat(css(target, "height"), 10);
+        const startWidth = parseFloat(css(target, "width"), 10);
+        const startHeight = parseFloat(css(target, "height"), 10);
         const posX = parseFloat(css(target, "left"), 10);
         const posY = parseFloat(css(target, "top"), 10);
 
@@ -68,13 +90,13 @@ interactElement
         };
 
         if (edges.top && edges.left) {
-          pointA.x = posX + width;
-          pointA.y = posY + height;
+          pointA.x = posX + startWidth;
+          pointA.y = posY + startHeight;
         } else if (edges.top && edges.right) {
           pointA.x = posX;
-          pointA.y = posY + height;
+          pointA.y = posY + startHeight;
         } else if (edges.bottom && edges.left) {
-          pointA.x = posX + width;
+          pointA.x = posX + startWidth;
           pointA.y = posY;
         } else if (edges.bottom && edges.right) {
           pointA.x = posX;
@@ -82,15 +104,13 @@ interactElement
         }
 
         const center = {
-            x : posX + width / 2,
-            y : posY + height / 2,
+            x : posX + startWidth / 2,
+            y : posY + startHeight / 2,
         }
 
         const angle = target.getAttribute("data-angle") ? parseFloat(target.getAttribute("data-angle")) : 0;
 
-        // POINT THAT DOESN'T MOVE
         const rotatedA = rotate(pointA, center, angle);
-
 
         var cosFraction = Math.cos(angle);
         var sinFraction = Math.sin(angle);
@@ -170,3 +190,23 @@ const rotate = (coords, center, angle) => {
       y : (coords.x - center.x) * Math.sin(angle) + (coords.y - center.y) * Math.cos(angle) + center.y
     }
   }
+
+const rotateCursor = (cursorHTML, angle) => {
+  const normalizedAngle = angle % 360; // Keep within 0-359 range
+  const quadrant = Math.floor(normalizedAngle / 90); // Determine which 90° quadrant we're in
+  const withinQuadrant = normalizedAngle % 90; // Get angle within the current quadrant
+
+  // Define cursor transitions within a quadrant
+  const cursorTypes = [
+    ["ew-resize", "nwse-resize", "ns-resize"], // 0° - 90°
+    ["ns-resize", "nesw-resize", "ew-resize"], // 90° - 180°
+    ["ew-resize", "nwse-resize", "ns-resize"], // 180° - 270°
+    ["ns-resize", "nesw-resize", "ew-resize"], // 270° - 360°
+  ];
+
+  // Select cursor based on where we are within the quadrant
+  const index = withinQuadrant <= 20 ? 0 : withinQuadrant <= 75 ? 1 : 2;
+  cursorHTML.style.cursor = cursorTypes[quadrant][index];
+};
+
+const angle = (anchor, point) => Math.atan2(anchor.y - point.y, anchor.x - point.x) * 180 / Math.PI + 180;

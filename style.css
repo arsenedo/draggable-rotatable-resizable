@@ -55,16 +55,20 @@ html, body {
 
 .resize-handle-bottom.resize-handle-right {
     transform: translate(50%, 50%);
+    cursor: nwse-resize;
 }
 
 .resize-handle-bottom.resize-handle-left {
     transform: translate(-50%, 50%);
+    cursor: nesw-resize;
 }
 
 .resize-handle-top.resize-handle-right {
     transform: translate(50%, -50%);
+    cursor: nesw-resize;
 }
 
 .resize-handle-top.resize-handle-left {
     transform: translate(-50%, -50%);
+    cursor: nwse-resize;
 }
