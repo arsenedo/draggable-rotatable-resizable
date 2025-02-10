@@ -2,6 +2,8 @@ html, body {
     margin: 0;
     padding: 0;
     background-color: gray;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
 }
 
 .draggable {
@@ -71,4 +73,67 @@ html, body {
 .resize-handle-top.resize-handle-left {
     transform: translate(-50%, -50%);
     cursor: nwse-resize;
+}
+
+.label-wrapper {
+    position: absolute;
+    min-width: 100px;
+    max-width: 200px;
+    padding-left: 10px;
+}
+
+.label-wrapper.free-spin {
+    right: 0;
+    top: 50%;
+    transform: translate(100%, -50%);
+}
+
+.label-wrapper.anchor {
+    bottom: 0;
+    right: 0;
+}
+.label-wrapper.bottom-right {
+    transform: translateX(100%);
+}
+
+.label-wrapper.top-right {
+    transform: translate(75%, -75%) rotate(90deg);
+}
+
+.label-wrapper.top-left {
+    transform: translate(100%) rotate(180deg);
+    padding-right: 10px;
+}
+
+.label-wrapper.bottom-left {
+    transform: translate(75%, -60%) rotate(270deg);
+}
+
+
+.label {
+    font-size: 2rem;
+    background-color: rgb(66, 66, 66);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 2px;
+}
+
+.label:hover {
+    cursor: pointer;
+}
+
+.label:focus {
+    cursor: text;
+}
+
+.config-menu {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding-top: 10px;
+    padding-right: 10px;
 }

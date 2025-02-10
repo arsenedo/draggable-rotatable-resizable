@@ -4,9 +4,6 @@ const element = document.querySelector('.draggable');
 
 interactElement.draggable({
   listeners: {
-    start (event) {
-      console.log(event.type, event.target)
-    },
     move (event) {
         const {target} = event
 
@@ -33,7 +30,9 @@ interact(".rotate-handle").draggable({
         let box = event.target.parentElement;
 
         let angle = getDragAngle(event);
-        box.style.transform = `rotate(${angle}rad)`
+        box.style.transform = `rotate(${angle}rad)`;
+
+        updateLblAlign(box, angle);
     },
     onend: function(event) {
         const {target} = event;
@@ -210,3 +209,53 @@ const rotateCursor = (cursorHTML, angle) => {
 };
 
 const angle = (anchor, point) => Math.atan2(anchor.y - point.y, anchor.x - point.x) * 180 / Math.PI + 180;
+
+
+window.addEventListener("load", () => {
+  const lblAlignBtn = document.querySelector(".btn.lbl-align");
+  lblAlignBtn.addEventListener("click", (e) => {
+    window.isLblAnchored = !window.isLblAnchored;
+
+     e.target.textContent = window.isLblAnchored ? "Anchor" : "Free Spin";
+
+     updateLblAlign(element, element.getAttribute("data-angle"));
+  });
+});
+
+
+const updateLblAlign = (widget, angle = null) => {
+  const label = widget.querySelector(".label");
+  const labelWrapper = label.parentElement;
+  labelWrapper.className = "label-wrapper";
+
+  if (!window.isLblAnchored) {
+    label.style.transform = `rotate(${angle ? -angle : 0}rad)`;
+    labelWrapper.classList.add("free-spin");
+    return;
+  } 
+
+  label.style.transform = "";
+
+  labelWrapper.classList.add("anchor");
+
+  const normalizedAngle = Math.abs((angle * (180/Math.PI)) % 360); // Keep within 0-359 range
+  const quadrant = Math.floor(normalizedAngle / 90); // Determine which 90° quadrant we're in
+  const withinQuadrant = normalizedAngle % 90; // Get angle within the current quadrant
+
+  console.log(normalizedAngle);
+  let anchor = "bottom-right";
+
+  if(0 <= normalizedAngle && normalizedAngle <= 60) {
+    anchor = "bottom-right";
+  } else if (60 < normalizedAngle && normalizedAngle <= 150) {
+    anchor = "top-right";
+  } else if (150 < normalizedAngle && normalizedAngle <= 240) {
+    anchor = "top-left";
+  } else if (240 < normalizedAngle && normalizedAngle <= 360) {
+    anchor = "bottom-left";
+  }
+
+  labelWrapper.classList.add(anchor)
+
+  
+}
