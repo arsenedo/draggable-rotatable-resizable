@@ -210,19 +210,6 @@ const rotateCursor = (cursorHTML, angle) => {
 
 const angle = (anchor, point) => Math.atan2(anchor.y - point.y, anchor.x - point.x) * 180 / Math.PI + 180;
 
-
-window.addEventListener("load", () => {
-  const lblAlignBtn = document.querySelector(".btn.lbl-align");
-  lblAlignBtn.addEventListener("click", (e) => {
-    window.isLblAnchored = !window.isLblAnchored;
-
-     e.target.textContent = window.isLblAnchored ? "Anchor" : "Free Spin";
-
-     updateLblAlign(element, element.getAttribute("data-angle"));
-  });
-});
-
-
 const updateLblAlign = (widget, angle = null) => {
   const label = widget.querySelector(".label");
   const labelWrapper = label.parentElement;
@@ -259,3 +246,14 @@ const updateLblAlign = (widget, angle = null) => {
 
   
 }
+
+window.addEventListener("load", () => {
+  const lblAlignBtn = document.querySelector(".btn.lbl-align");
+  lblAlignBtn.addEventListener("click", (e) => {
+    window.isLblAnchored = !window.isLblAnchored;
+
+     e.target.textContent = window.isLblAnchored ? "Anchor" : "Free Spin";
+
+     updateLblAlign(element, element.getAttribute("data-angle"));
+  });
+});
