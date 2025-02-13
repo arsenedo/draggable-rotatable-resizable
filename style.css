@@ -119,7 +119,7 @@ html, body {
 }
 
 .label:hover {
-    cursor: pointer;
+    cursor: text;
 }
 
 .label:focus {

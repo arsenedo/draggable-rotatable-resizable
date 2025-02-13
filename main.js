@@ -76,7 +76,7 @@ interactElement
       move: function (event) {
         const { target } = event;
         const { edges } = event;
-      
+
         const startWidth = parseFloat(css(target, "width"), 10);
         const startHeight = parseFloat(css(target, "height"), 10);
         const posX = parseFloat(css(target, "left"), 10);
@@ -111,14 +111,9 @@ interactElement
 
         const rotatedA = rotate(pointA, center, angle);
 
-        var cosFraction = Math.cos(angle);
-        var sinFraction = Math.sin(angle);
-        var rotatedWDiff = cosFraction * event.delta.x + sinFraction * event.delta.y;
-        var rotatedHDiff = cosFraction * event.delta.y - sinFraction * event.delta.x;
-
         const dragPoint = {
-            x : event.client.x + rotatedWDiff,
-            y : event.client.y + rotatedHDiff,
+            x : event.client.x,
+            y : event.client.y,
         };
 
         const newCenter = {
@@ -153,7 +148,7 @@ interactElement
         
         if (positions[key]) {
           const { x, y, width, height } = positions[key];
-        
+
           Object.assign(target.style, {
             left: `${x}px`,
             top: `${y}px`,
