@@ -82,6 +82,9 @@ interactElement
         const posX = parseFloat(css(target, "left"), 10);
         const posY = parseFloat(css(target, "top"), 10);
 
+        const minWidth = 20;
+        const minHeight = 20;
+
         // point that should NOT move. Usually it's the opposite point to the dragged one
         const pointA = {
           x : 0,
@@ -124,7 +127,7 @@ interactElement
         const newA = rotate(rotatedA, newCenter, -angle);
         const newC = rotate(dragPoint, newCenter, -angle);
 
-        const div = document.createElement("div");
+        /*const div = document.createElement("div");
         div.style.width = 5 + "px";
         div.style.height = 5 + "px";
         div.style.background = "orange";
@@ -135,7 +138,7 @@ interactElement
 
         setTimeout(() => {
           div.remove();
-        }, 5000)
+        }, 5000)*/
 
         const positions = {
           "top-left": { x: newC.x, y: newC.y, width: newA.x - newC.x, height: newA.y - newC.y },
@@ -146,16 +149,50 @@ interactElement
         
         const key = `${edges.top ? "top" : "bottom"}-${edges.left ? "left" : "right"}`;
         
-        if (positions[key]) {
-          const { x, y, width, height } = positions[key];
+        const position = positions[key];
 
-          Object.assign(target.style, {
-            left: `${x}px`,
-            top: `${y}px`,
-            width: `${width}px`,
-            height: `${height}px`
-          });
+        if(position.width < 20 || position.height < 20) {
+          const positionCenter = {
+            x : position.x + position.width / 2, 
+            y : position.y + position.height / 2,
+          }
+          const rotatedPosition = rotate(
+            {x : position.x, y : position.y}, 
+            positionCenter,
+            angle
+          )
+
+          const rotatedBottomRight = rotate(
+            {
+              x : position.width < 20 ? position.x + minWidth : position.x + position.width, 
+              y : position.height < 20 ? position.y + minHeight : position.y + position.height
+            },
+            positionCenter,
+            angle,
+          )
+
+          const correctedCenter = {
+            x : (rotatedPosition.x + rotatedBottomRight.x) / 2,
+            y : (rotatedPosition.y + rotatedBottomRight.y) / 2,
+          }
+
+          const correctedA = rotate(rotatedPosition, correctedCenter, -angle);
+          const correctedC = rotate(rotatedBottomRight, correctedCenter, -angle);
+
+          position.x = correctedA.x;
+          position.y = correctedA.y;
+          position.width = correctedC.x - correctedA.x;
+          position.height = correctedC.y - correctedA.y;
         }
+
+        const {x, y, width, height} = position;
+
+        Object.assign(target.style, {
+          left: `${x}px`,
+          top: `${y}px`,
+          width: `${width}px`,
+          height: `${height}px`
+        });
       }
     }
   })
