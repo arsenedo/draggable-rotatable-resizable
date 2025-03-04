@@ -78,7 +78,6 @@ html, body {
 .label-wrapper {
     position: absolute;
     min-width: 100px;
-    max-width: 200px;
     padding-left: 10px;
 }
 

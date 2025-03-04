@@ -153,32 +153,48 @@ interactElement
 
         if(position.width < 20 || position.height < 20) {
           const positionCenter = {
-            x : position.x + position.width / 2, 
-            y : position.y + position.height / 2,
+            x: position.x + position.width / 2,
+            y: position.y + position.height / 2,
+          };
+        
+          // Enforce minimum width and height
+          const correctedWidth = Math.max(position.width, minWidth);
+          const correctedHeight = Math.max(position.height, minHeight);
+        
+          // Adjust based on the dragged corner
+          let adjustedX = position.x;
+          let adjustedY = position.y;
+        
+          if (edges.top) {
+            adjustedY = position.y + (position.height - correctedHeight);
           }
+          if (edges.left) {
+            adjustedX = position.x + (position.width - correctedWidth);
+          }
+        
           const rotatedPosition = rotate(
-            {x : position.x, y : position.y}, 
+            { x: adjustedX, y: adjustedY },
             positionCenter,
             angle
-          )
-
+          );
+        
           const rotatedBottomRight = rotate(
             {
-              x : position.width < 20 ? position.x + minWidth : position.x + position.width, 
-              y : position.height < 20 ? position.y + minHeight : position.y + position.height
+              x: adjustedX + correctedWidth,
+              y: adjustedY + correctedHeight,
             },
             positionCenter,
-            angle,
-          )
-
+            angle
+          );
+        
           const correctedCenter = {
-            x : (rotatedPosition.x + rotatedBottomRight.x) / 2,
-            y : (rotatedPosition.y + rotatedBottomRight.y) / 2,
-          }
-
+            x: (rotatedPosition.x + rotatedBottomRight.x) / 2,
+            y: (rotatedPosition.y + rotatedBottomRight.y) / 2,
+          };
+        
           const correctedA = rotate(rotatedPosition, correctedCenter, -angle);
           const correctedC = rotate(rotatedBottomRight, correctedCenter, -angle);
-
+        
           position.x = correctedA.x;
           position.y = correctedA.y;
           position.width = correctedC.x - correctedA.x;
